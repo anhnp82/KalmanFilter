@@ -50,3 +50,8 @@ Temporary Items
 *.idb
 *.manifest
 *.user
+x64/Release/movie.mp4
+*.ilk
+KalmanFilter/x64/Debug/BuildLog.htm
+KalmanFilter/x64/Release/BuildLog.htm
+KalmanFilter/x64/Release/BuildLog.htm

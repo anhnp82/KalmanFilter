@@ -79,7 +79,8 @@ int main( int argc, char** argv )
     if (argc < 5)
     {
         printf("video_name sigma threshold patch_size \n");
-        exit;
+        //exit;
+		return 1;
     }
 
     float sigma = atof(argv[2]);

@@ -181,6 +181,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
+				AdditionalIncludeDirectories="$(OPENCV_DIR)\..\..\include"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -198,6 +199,8 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalDependencies="opencv_core2411d.lib opencv_highgui2411d.lib opencv_imgproc2411d.lib"
+				AdditionalLibraryDirectories="$(OPENCV_DIR)\lib"
 				GenerateDebugInformation="true"
 				TargetMachine="17"
 			/>
