@@ -311,7 +311,7 @@ do_local_match(     const vector< vector<float> > & despModel,
 
     //partial_sort(matchings.begin(), matchings.begin()+1, matchings.end(), CmpDist());
 
-    printf("hariss %d %d \n", harrisData[0].theta, harrisData[0].rho);
+    if (harrisData.size() > 0) printf("harris %d %d \n", harrisData[0].theta, harrisData[0].rho);
     //printf("harris size %d matching size %d desp size %d \n", harrisData.size(), matchings.size(), despModel.size());
 
     std::vector<CvPoint> candidates;

@@ -1,5 +1,7 @@
 #include "kalman_filter.h"
 #include "object_detection.h"
+#include <iostream>
+#include <limits>
 
 bool Kalman_Filter::drawing_box = false;
 CvRect Kalman_Filter::box = cvRect(-1,-1,0,0);
@@ -240,14 +242,15 @@ void Kalman_Filter::start_tracking(const char * file_name)
             printf("feature no %d peak %f position %d %d \n", maxId, maxPeak, feature.theta, feature.rho);
         }
 
+		if( !frame ) break;
+
         if (frameNo > 0)
         {
             track_object(frame, despModel);
         }
 
-        if( !frame ) break;
         cvShowImage( "video", frame );
-        char c = cvWaitKey(50);
+        char c = cvWaitKey(10);
         //if( c == 27 ) break;
 
         frameNo++;
@@ -312,8 +315,8 @@ void Kalman_Filter::track_object(IplImage *img, vector< vector<float> > despMode
     Object_Detection objectDetector;
 
     std::vector<CvPoint> measurements = objectDetector.do_local_match(despModel, search_region, sigma, threshold);
-    float minDist = 10000;
-    int minIndex = 10000;
+    float minDist = FLT_MAX;
+    int minIndex = INT_MAX;
     CvMat* covMat  = cvCreateMat(2,2,CV_32FC1);
     CvMat* predictedPoint  = cvCreateMat(1,2,CV_32FC1);
     cvmSet(covMat, 0, 0, sigma_predict.at<float>(0, 0));
@@ -324,8 +327,6 @@ void Kalman_Filter::track_object(IplImage *img, vector< vector<float> > despMode
     cvmSet(predictedPoint, 0, 1, x_predict.at<float>(1, 0));
     for(int i = 0; i < measurements.size(); i++)
     {
-
-
         CvMat* hypothesis  = cvCreateMat(1,2,CV_32FC1);
 
         cvmSet(hypothesis, 0, 0, measurements[i].x+minx);
@@ -340,7 +341,8 @@ void Kalman_Filter::track_object(IplImage *img, vector< vector<float> > despMode
         }
     }
 
-    CvPoint measurement = measurements[minIndex];
+	CvPoint measurement = {roi.width/2, roi.height/2};
+	if (minIndex != INT_MAX && measurements.size() > 0) measurement = measurements[minIndex];
     measurement.x += minx;
     measurement.y += miny;
 
@@ -353,23 +355,19 @@ void Kalman_Filter::track_object(IplImage *img, vector< vector<float> > despMode
     y.at<float>(1, 0) = measurement.y;
 
     Mat x_correct = x_predict + K * (y - M * x_predict);
-
     Mat sigma_correct = (I - K * M) * sigma_predict;
-
-
 
     //prediction
     x_predict = D * x_correct;
     sigma_predict = D * sigma_correct * D.t() + sigma_d;
 
-    //cout << "x_correct: " << x_correct << endl;
+	std::cout << "x_correct: \n" << x_correct << std::endl;
 
     m_trajectory.push_back(cvPoint(x_correct.at<float>(0, 0), x_correct.at<float>(1, 0)));
     for (int i = 0; i < m_trajectory.size(); i++)
     {
         cvCircle(img, m_trajectory[i], 3, cvScalar(0,255,0), 2);
     }
-
 }
 
 
