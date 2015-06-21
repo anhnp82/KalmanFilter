@@ -10,7 +10,7 @@
 int main( int argc, char** argv )
 {
 
-	int nApplicationChooser = 0;
+	int nApplicationChooser = 1;
 
 	switch (nApplicationChooser)
 	{
@@ -35,12 +35,16 @@ int main( int argc, char** argv )
 
 	case 1: //Hough transform
 		{
-			if (argc < 2)
+			if (argc < 5)
 			{
-				printf("Image_Name\n");
+				printf("Image_Name EdgeLowerThreshold EdgeUpperThreshold VoteThreshold \n");
 				//exit;
 				return 1;
 			}
+
+			float fEdgeLowerThreshold = atof(argv[2]);
+			float fEdgeUpperThreshold = atof(argv[3]);
+			int nVoteThreshold = atoi(argv[4]);
 
 		    IplImage* img = cvLoadImage( argv[1] );
 		    //load gray scale
@@ -51,10 +55,10 @@ int main( int argc, char** argv )
 		    //    cvSaveImage("test.png", result, 0);
 
 		    Filter filter;
-		    IplImage* edgeImage = filter.myCanny(grayImg, 2, 0.2, 0.6);
-		    //cvSaveImage("edge.png", edgeImage, 0);
+		    IplImage* edgeImage = filter.myCanny(grayImg, 1, fEdgeLowerThreshold, fEdgeUpperThreshold); // 1 0.1 0.4
+		    cvSaveImage("edge.png", edgeImage, 0);
 		    Hough_Transform hough;
-		    IplImage* result = hough.drawHoughLines(grayImg, edgeImage, 0.2, 0.6, 100, 2);
+		    IplImage* result = hough.drawHoughLines(grayImg, edgeImage, fEdgeLowerThreshold, fEdgeUpperThreshold, nVoteThreshold, 1); // 800 1
 
 			//        cvNamedWindow( "InputImage", CV_WINDOW_NORMAL );
 			//        cvShowImage( "InputImage", img );
@@ -63,8 +67,9 @@ int main( int argc, char** argv )
 			        cvWaitKey(0);
 					cvReleaseImage( &img );
 					cvDestroyWindow( "result" );
-			//        cvReleaseImage( &img );
-			//        cvReleaseImage( &grayImg );
+					cvReleaseImage( &result );
+			        cvReleaseImage( &img );
+			        cvReleaseImage( &grayImg );
 			//        cvDestroyWindow( "InputImage" );
 			
 		}
