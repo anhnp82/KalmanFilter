@@ -3,12 +3,11 @@
 #include <iostream>
 #include <limits>
 
-bool Kalman_Filter::drawing_box = false;
+bool Kalman_Filter::s_bDrawing_box = false;
 CvRect Kalman_Filter::box = cvRect(-1,-1,0,0);
 
 Kalman_Filter::Kalman_Filter(float sigma, float threshold, float patch_size)
 {
-
     this->sigma = sigma;
     this->threshold = threshold;
     this->patch_size = patch_size;
@@ -38,13 +37,10 @@ Kalman_Filter::Kalman_Filter(float sigma, float threshold, float patch_size)
 
 }
 
-
 Kalman_Filter::~Kalman_Filter()
 {
 
 }
-
-
 
 void Kalman_Filter::draw_box( IplImage* img, CvRect rect )
 {
@@ -73,7 +69,7 @@ void Kalman_Filter::my_mouse_callback(
     {
         case CV_EVENT_MOUSEMOVE:
         {
-            if( drawing_box )
+            if( s_bDrawing_box )
             {
                 box.width = x-box.x;
                 box.height = y-box.y;
@@ -83,15 +79,16 @@ void Kalman_Filter::my_mouse_callback(
 
         case CV_EVENT_LBUTTONDOWN:
         {
-            drawing_box = true;
+            s_bDrawing_box = true;
             box = cvRect(x, y, 0, 0);
         }
         break;
 
         case CV_EVENT_LBUTTONUP:
         {
-            drawing_box = false;
-            if(box.width<0)
+            s_bDrawing_box = false;
+            
+			if(box.width<0)
             {
                 box.x+=box.width;
                 box.width *=-1;
@@ -106,11 +103,8 @@ void Kalman_Filter::my_mouse_callback(
             //draw_box(image, box);
         }
         break;
-
     }
 }
-
-
 
 CvRect Kalman_Filter::get_roi_from_user(IplImage *img)
 {
@@ -137,20 +131,17 @@ CvRect Kalman_Filter::get_roi_from_user(IplImage *img)
     while( 1 )
     {
         //cvCopyImage( img, temp );
-		//cvCopy( img, temp );
-        if( drawing_box ) draw_box( temp, box );
+		cvCopy( img, temp );
+        if( s_bDrawing_box ) draw_box( temp, box );
         cvShowImage( "Box Example", temp );
-        if( cvWaitKey( 15 )==27 ) break;
+        if( cvWaitKey( 15 )==13 ) break;
     }
     // Be tidy
     //
     cvReleaseImage( &temp );
     cvDestroyWindow( "Box Example" );
     return box;
-
 }
-
-
 
 void Kalman_Filter::video_extraction()
 {
@@ -179,10 +170,6 @@ void Kalman_Filter::video_extraction()
     cvDestroyWindow( "video" );
 
 }
-
-
-
-
 
 void Kalman_Filter::start_tracking(const char * file_name)
 {
@@ -237,8 +224,6 @@ void Kalman_Filter::start_tracking(const char * file_name)
             x_predict.at<float>(1, 0) = feature.rho;
             m_trajectory.push_back(cvPoint(feature.theta, feature.rho));
 
-
-
             printf("feature no %d peak %f position %d %d \n", maxId, maxPeak, feature.theta, feature.rho);
         }
 
@@ -251,7 +236,7 @@ void Kalman_Filter::start_tracking(const char * file_name)
 
         cvShowImage( "video", frame );
         char c = cvWaitKey(10);
-        //if( c == 27 ) break;
+        if( c == 27 ) break;
 
         frameNo++;
     }
@@ -259,9 +244,6 @@ void Kalman_Filter::start_tracking(const char * file_name)
     cvDestroyWindow( "video" );
 
 }
-
-
-
 
 void Kalman_Filter::track_object(IplImage *img, vector< vector<float> > despModel
                                  )
@@ -370,11 +352,8 @@ void Kalman_Filter::track_object(IplImage *img, vector< vector<float> > despMode
     }
 }
 
-
-
 IplImage* Kalman_Filter::get_model(IplImage * img1, CvRect & roi)
 {
-
     roi = get_roi_from_user(img1);
     //printf("roi: %d %d %d %d \n", roi.x, roi.y, roi.width, roi.height);
 
@@ -390,11 +369,7 @@ IplImage* Kalman_Filter::get_model(IplImage * img1, CvRect & roi)
     cvResetImageROI(img1);
 
     return model;
-
 }
-
-
-
 
 void Kalman_Filter::extract_measurement(const char * model_file, const char * data_file
                                         , float sigma, float threshold, int k)
@@ -435,18 +410,4 @@ void Kalman_Filter::extract_measurement(const char * model_file, const char * da
     cvDestroyWindow( "model" );
     cvDestroyWindow( "data" );
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 

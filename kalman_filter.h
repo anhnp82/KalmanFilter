@@ -40,7 +40,7 @@ public:
     void start_tracking(const char * file_name);
 
     static CvRect box;
-    static bool drawing_box;
+    static bool s_bDrawing_box;
 
     struct point2d
     {

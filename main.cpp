@@ -10,32 +10,73 @@
 int main( int argc, char** argv )
 {
 
-//    //hough
-//    IplImage* img = cvLoadImage( "building.jpg" );
-//    //load gray scale
-//    IplImage* grayImg = cvLoadImage("building.jpg", 0);
+	int nApplicationChooser = 0;
 
+	switch (nApplicationChooser)
+	{
+	case 0: // Kalman filter
+		{
+			if (argc < 5)
+			{
+				printf("video_name sigma threshold patch_size \n");
+				//exit;
+				return 1;
+			}
 
+			float sigma = atof(argv[2]);
+			int peak = atoi(argv[3]);
+			int patch_size = atoi(argv[4]);
+			//int speed = atoi(argv[5]);
 
-//    //    Filter filter;
-//    //    IplImage* result = filter.gaussianFilter(grayImg, 5);
-//    //    cvSaveImage("test.png", result, 0);
+			Kalman_Filter kalman(sigma, peak, patch_size); // 1, 1000, 50
+			kalman.start_tracking(argv[1]);
+		}
+		break;
 
+	case 1: //Hough transform
+		{
+			if (argc < 2)
+			{
+				printf("Image_Name\n");
+				//exit;
+				return 1;
+			}
 
+		    IplImage* img = cvLoadImage( argv[1] );
+		    //load gray scale
+		    IplImage* grayImg = cvLoadImage(argv[1], 0);
 
-//    Filter filter;
-//    IplImage* edgeImage = filter.myCanny(grayImg, 2, 0.2, 0.6);
-//    cvSaveImage("edge.png", edgeImage, 0);
-//    Hough_Transform hough;
-//    IplImage* result = hough.drawHoughLines(grayImg, edgeImage, 0.2, 0.6, 100, 2);
+		    //    Filter filter;
+		    //    IplImage* result = filter.gaussianFilter(grayImg, 5);
+		    //    cvSaveImage("test.png", result, 0);
+
+		    Filter filter;
+		    IplImage* edgeImage = filter.myCanny(grayImg, 2, 0.2, 0.6);
+		    //cvSaveImage("edge.png", edgeImage, 0);
+		    Hough_Transform hough;
+		    IplImage* result = hough.drawHoughLines(grayImg, edgeImage, 0.2, 0.6, 100, 2);
+
+			//        cvNamedWindow( "InputImage", CV_WINDOW_NORMAL );
+			//        cvShowImage( "InputImage", img );
+			        cvNamedWindow( "result", CV_WINDOW_NORMAL );
+			        cvShowImage( "result", result );
+			        cvWaitKey(0);
+					cvReleaseImage( &img );
+					cvDestroyWindow( "result" );
+			//        cvReleaseImage( &img );
+			//        cvReleaseImage( &grayImg );
+			//        cvDestroyWindow( "InputImage" );
+			
+		}
+	}
+	
+
 
 
 
 ////    Object_Detection objectDetector;
 ////    IplImage * result = objectDetector.showCorners(img, objectDetector.harris(grayImg, 1.6, 900));
 ////    cvSaveImage("test.png", result, 0);
-
-
 
 //        cvNamedWindow( "InputImage", CV_WINDOW_NORMAL );
 //        cvShowImage( "InputImage", img );
@@ -69,28 +110,6 @@ int main( int argc, char** argv )
 //    cvReleaseImage( &img2 );
 //    cvDestroyWindow( "model" );
 //    cvDestroyWindow( "data" );
-
-
-    /////////////////
-    // kalman
-    //////////////
-
-
-    if (argc < 5)
-    {
-        printf("video_name sigma threshold patch_size \n");
-        //exit;
-		return 1;
-    }
-
-    float sigma = atof(argv[2]);
-    int peak = atoi(argv[3]);
-    int patch_size = atoi(argv[4]);
-    //int speed = atoi(argv[5]);
-
-    Kalman_Filter kalman(sigma, peak, patch_size);
-    kalman.start_tracking(argv[1]);
-    //kalman.extract_measurement("0133.jpg", "0144.jpg", 1, 2000, 20);
 
 
 
