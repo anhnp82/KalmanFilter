@@ -32,7 +32,7 @@ class Hough_Transform
 
 public:
     Hough_Transform();
-    IplImage* drawHoughLines(IplImage* img, IplImage* edgeImage, float lower, float upper, int peak, float sigma);
+    IplImage* drawHoughLines(IplImage* img, IplImage* edgeImage, int peak, int nBins);
 
     struct line
     {

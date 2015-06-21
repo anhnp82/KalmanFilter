@@ -116,14 +116,15 @@ std::vector<Hough_Transform::line> Hough_Transform::findhoughpeaks(IplImage *hou
     return lines;
 }
 
-IplImage* Hough_Transform::drawHoughLines(IplImage* img, IplImage *edgeImage, float lower, float upper, int peak, float sigma)
+IplImage* Hough_Transform::drawHoughLines(IplImage* img, IplImage *edgeImage, int peak, int nBins)
 {
 
     //Filter filter;
     //IplImage* edgeImage = filter.myCanny(img, sigma, lower, upper);//0.3, 0.5, 0.8
 
-    int nBinsRho = 1200;
-    int nBinsTheta = 1200;
+    int nBinsRho = nBins;
+	int nBinsTheta = nBins;
+    
     int img_width = edgeImage->width-1;
     //float D = sqrt(pow(edgeImage->height, 2) + pow(edgeImage->width, 2));
 	float D = sqrt((float)edgeImage->height*edgeImage->height + edgeImage->width*edgeImage->width);

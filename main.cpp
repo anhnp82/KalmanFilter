@@ -35,9 +35,9 @@ int main( int argc, char** argv )
 
 	case 1: //Hough transform
 		{
-			if (argc < 5)
+			if (argc < 6)
 			{
-				printf("Image_Name EdgeLowerThreshold EdgeUpperThreshold VoteThreshold \n");
+				printf("Image_Name EdgeLowerThreshold EdgeUpperThreshold VoteThreshold #Bins \n");
 				//exit;
 				return 1;
 			}
@@ -45,6 +45,7 @@ int main( int argc, char** argv )
 			float fEdgeLowerThreshold = atof(argv[2]);
 			float fEdgeUpperThreshold = atof(argv[3]);
 			int nVoteThreshold = atoi(argv[4]);
+			int nBins = atoi(argv[5]);
 
 		    IplImage* img = cvLoadImage( argv[1] );
 		    //load gray scale
@@ -58,7 +59,7 @@ int main( int argc, char** argv )
 		    IplImage* edgeImage = filter.myCanny(grayImg, 1, fEdgeLowerThreshold, fEdgeUpperThreshold); // 1 0.1 0.4
 		    cvSaveImage("edge.png", edgeImage, 0);
 		    Hough_Transform hough;
-		    IplImage* result = hough.drawHoughLines(grayImg, edgeImage, fEdgeLowerThreshold, fEdgeUpperThreshold, nVoteThreshold, 1); // 800 1
+		    IplImage* result = hough.drawHoughLines(grayImg, edgeImage, nVoteThreshold, nBins); // 800 1200
 
 			//        cvNamedWindow( "InputImage", CV_WINDOW_NORMAL );
 			//        cvShowImage( "InputImage", img );
