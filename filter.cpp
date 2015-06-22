@@ -13,21 +13,25 @@ Filter::Filter()
 void Filter::gauss(float g[], int length, float sigma)
 {
     int w = (length - 1)/2;
+	float fNormalization = (1/(sqrt(2*M_PI)*sigma));
+
     for (int i = 0; i < length; i++)
     {
         int x = i - w;
-        g[i] = (1/(sqrt(2*M_PI)*sigma)) * exp(-((x*x)/(2*sigma*sigma)));
+        g[i] = fNormalization * exp(-((x*x)/(2*sigma*sigma)));
     }
 }
 
 void Filter::gaussDx(float g[], int length, float sigma)
 {
     int w = (length - 1)/2;
+	float fNormalization = 1.0f/(sqrt(2*M_PI)*sigma*sigma*sigma);
+
     for (int i = 0; i < length; i++)
     {
         int x = i - w;
-        //g[i] = (1/(sqrt(2*M_PI)*sigma)) * exp(-((x*x)/(2*sigma*sigma)));
-        g[i] = -(x*exp(-x*x/(2*sigma*sigma)))/(sqrt(2*M_PI)*pow(sigma, 3));
+        //g[i] = -(x*exp(-x*x/(2*sigma*sigma)))/(sqrt(2*M_PI)*pow(sigma, 3));
+		g[i] = -(x*exp(-x*x/(2*sigma*sigma)))*fNormalization;
     }
 }
 
@@ -381,7 +385,6 @@ IplImage* Filter::myCanny(IplImage* img, float sigma, float lower, float upper)
     // Start at the high pixels and follow the edges
     for (int i=0; i < high->height; i++)
     {
-
         for(int j=0; j < high->width; j++)
         {
             //printf("high %d \n", wrapHigh[i][j]);
@@ -416,7 +419,6 @@ Filter::FollowResult Filter::followEdge(int i, int j, FollowResult edgeResult)
 
     int offi[] = {1, 1, 0, -1, -1, -1, 0, 1};
     int offj[] = {0, 1, 1, 1, 0, -1, -1, -1};
-
 
     for (int k=0; k < 8; k++)
     {

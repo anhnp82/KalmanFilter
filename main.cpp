@@ -57,23 +57,23 @@ int main( int argc, char** argv )
 
 		    Filter filter;
 		    IplImage* edgeImage = filter.myCanny(grayImg, 1, fEdgeLowerThreshold, fEdgeUpperThreshold); // 1 0.1 0.4
-		    cvSaveImage("edge.png", edgeImage, 0);
-		    Hough_Transform hough;
-		    IplImage* result = hough.drawHoughLines(grayImg, edgeImage, nVoteThreshold, nBins); // 800 1200
+		    
+			cvSaveImage("edge.png", edgeImage, 0);
 
-			//        cvNamedWindow( "InputImage", CV_WINDOW_NORMAL );
-			//        cvShowImage( "InputImage", img );
-			        cvNamedWindow( "result", CV_WINDOW_NORMAL );
-			        cvShowImage( "result", result );
-			        cvWaitKey(0);
-					cvReleaseImage( &img );
-					cvDestroyWindow( "result" );
-					cvReleaseImage( &result );
-			        cvReleaseImage( &img );
-			        cvReleaseImage( &grayImg );
-			//        cvDestroyWindow( "InputImage" );
-			
+		    Hough_Transform hough;
+		    IplImage* result = hough.drawHoughLines(grayImg, edgeImage, nVoteThreshold, nBins); // 160 700
+
+			cvSaveImage("result.png", result, 0);
+	        cvNamedWindow( "result", CV_WINDOW_NORMAL );
+	        cvShowImage( "result", result );
+	        cvWaitKey(0);
+			cvReleaseImage( &img );
+			cvDestroyWindow( "result" );
+			cvReleaseImage( &result );
+	        cvReleaseImage( &img );
+	        cvReleaseImage( &grayImg );
 		}
+		break;
 	}
 	
 
