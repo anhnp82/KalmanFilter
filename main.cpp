@@ -10,7 +10,7 @@
 int main( int argc, char** argv )
 {
 
-	int nApplicationChooser = 1;
+	int nApplicationChooser = 0;
 
 	switch (nApplicationChooser)
 	{

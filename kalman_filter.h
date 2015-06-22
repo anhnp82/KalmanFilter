@@ -39,7 +39,7 @@ public:
     //void start_tracking(const char * file_name, int k = 10, float sigma = 2.0, float threshold = 100000);
     void start_tracking(const char * file_name);
 
-    static CvRect box;
+    static CvRect s_box;
     static bool s_bDrawing_box;
 
     struct point2d

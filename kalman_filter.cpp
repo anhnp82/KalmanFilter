@@ -4,7 +4,7 @@
 #include <limits>
 
 bool Kalman_Filter::s_bDrawing_box = false;
-CvRect Kalman_Filter::box = cvRect(-1,-1,0,0);
+CvRect Kalman_Filter::s_box = cvRect(-1,-1,0,0);
 
 Kalman_Filter::Kalman_Filter(float sigma, float threshold, float patch_size)
 {
@@ -71,8 +71,8 @@ void Kalman_Filter::my_mouse_callback(
         {
             if( s_bDrawing_box )
             {
-                box.width = x-box.x;
-                box.height = y-box.y;
+                s_box.width = x-s_box.x;
+                s_box.height = y-s_box.y;
             }
         }
         break;
@@ -80,7 +80,7 @@ void Kalman_Filter::my_mouse_callback(
         case CV_EVENT_LBUTTONDOWN:
         {
             s_bDrawing_box = true;
-            box = cvRect(x, y, 0, 0);
+            s_box = cvRect(x, y, 0, 0);
         }
         break;
 
@@ -88,15 +88,15 @@ void Kalman_Filter::my_mouse_callback(
         {
             s_bDrawing_box = false;
             
-			if(box.width<0)
+			if(s_box.width<0)
             {
-                box.x+=box.width;
-                box.width *=-1;
+                s_box.x+=s_box.width;
+                s_box.width *=-1;
             }
-            if(box.height<0)
+            if(s_box.height<0)
             {
-                box.y+=box.height;
-                box.height*=-1;
+                s_box.y+=s_box.height;
+                s_box.height*=-1;
             }
 
             //do not contaminate the original image here
@@ -132,7 +132,7 @@ CvRect Kalman_Filter::get_roi_from_user(IplImage *img)
     {
         //cvCopyImage( img, temp );
 		cvCopy( img, temp );
-        if( s_bDrawing_box ) draw_box( temp, box );
+        if( s_bDrawing_box ) draw_box( temp, s_box );
         cvShowImage( "Box Example", temp );
         if( cvWaitKey( 15 )==13 ) break;
     }
@@ -140,7 +140,7 @@ CvRect Kalman_Filter::get_roi_from_user(IplImage *img)
     //
     cvReleaseImage( &temp );
     cvDestroyWindow( "Box Example" );
-    return box;
+    return s_box;
 }
 
 void Kalman_Filter::video_extraction()
@@ -202,7 +202,7 @@ void Kalman_Filter::start_tracking(const char * file_name)
 
             harrisModel = objectDetector.harris(modelGray, sigma, threshold);
             printf("number of corners found in the model: %d \n", harrisModel.size());
-            objectDetector.descriptor_maglap(modelGray, features, 41, sigma, 16, despModel);
+            //objectDetector.descriptor_maglap(modelGray, features, 41, sigma, 16, despModel);
 
             int maxId = 0;
             float maxPeak = -1;
@@ -215,11 +215,14 @@ void Kalman_Filter::start_tracking(const char * file_name)
                 }
             }
 
-            Hough_Transform::line feature;
+            Hough_Transform::line feature = harrisModel[maxId];
+
+			features.push_back(feature);
+			objectDetector.descriptor_maglap(modelGray, features, 41, sigma, 16, despModel);
+
             feature.theta = harrisModel[maxId].theta + roi.x;
             feature.rho = harrisModel[maxId].rho + roi.y;
 
-            features.push_back(feature);
             x_predict.at<float>(0, 0) = feature.theta;
             x_predict.at<float>(1, 0) = feature.rho;
             m_trajectory.push_back(cvPoint(feature.theta, feature.rho));

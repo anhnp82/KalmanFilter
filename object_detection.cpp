@@ -773,6 +773,8 @@ descriptor_maglap(IplImage *img, const std::vector<Hough_Transform::line> & corn
 //        /* always reset the Region of Interest */
 //        cvResetImageROI(img);
 
+		//printf("roi min(%d, %d) max(%d, %d) \n", minx, miny, maxx, maxy);
+
         IplImage* window = subImage(img, minx, miny, maxx, maxy);
         //IplImage* window = subImage(img, 0, 0, 40, 40);
 
@@ -783,9 +785,6 @@ descriptor_maglap(IplImage *img, const std::vector<Hough_Transform::line> & corn
         cvReleaseImage( &window );
 
         desp.push_back(hist);
-
-        //printf("done descriptor %d \n", i);
-
     }
 }
 
