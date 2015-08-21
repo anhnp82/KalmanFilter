@@ -100,7 +100,7 @@ void Kalman_Filter::my_mouse_callback(
             }
 
             //do not contaminate the original image here
-            //draw_box(image, box);
+            draw_box(image, s_box);
         }
         break;
     }
